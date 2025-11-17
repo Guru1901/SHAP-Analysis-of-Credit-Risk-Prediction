@@ -1,187 +1,144 @@
-Credit Risk Prediction System
+Credit Risk Prediction Project
 
-Machine Learning Model with Random Forest, Logistic Regression, and SHAP Explainability
+LightGBM, XGBoost, SHAP, LIME, and Fairness Assessment
+(Dataset: cs-training.csv)
 
-Overview
+This project focuses on developing an explainable credit risk prediction system using the well-known “Give Me Some Credit” dataset from Kaggle. The objective is to identify customers who are likely to experience serious delinquency within the next two years. Along with building predictive models, the project also emphasizes model transparency and fairness.
 
-This project develops a credit risk prediction system that classifies customers based on the likelihood of loan default. The solution includes data preprocessing, model training, evaluation, and explainability components. The objective is to provide a transparent and reliable scoring mechanism that supports data-driven credit decisioning.
+The implementation includes the following components:
 
-The project includes:
+LightGBM as the primary classifier
 
-Random Forest (primary model)
+XGBoost as a comparison model
 
-Logistic Regression (benchmark model)
+SMOTE for handling class imbalance
 
-Scikit-Learn preprocessing pipeline
+SHAP for both global and individual-level explanations
 
-Model evaluation using classification metrics
+LIME for additional local interpretability
 
-SHAP-based global and local interpretation
+A fairness analysis based on age groups
 
-Export of trained models, plots, and reports
+Automatic export of all results and artifacts into a single output folder
 
-The system is designed as a complete, reproducible machine learning workflow.
+The solution satisfies the essential requirements of an explainable and auditable credit scoring pipeline.
 
 Repository Structure
-credit-risk-project/
+credit_project/
 │── README.md
-│── requirements.txt
-│── notebooks/
-│     └── Credit_Risk_Project.ipynb
-│── data/
-│     └── credit_risk_dataset.csv
-│── models/
-│     ├── random_forest_model.pkl
-│     ├── logistic_regression_model.pkl
-│── figures/
-│     ├── correlation_heatmap.png
-│     ├── feature_importance.png
-│     ├── shap_summary.png
-│── shap_outputs/
-│     ├── shap_values.npy
-│     ├── base_value.txt
-│── report/
-│     ├── Credit_Risk_Report.pdf
-│     └── Credit_Risk_Report.docx
-└── credit_output.zip
-
-Installation
-
-Install required packages:
-
-pip install -r requirements.txt
+└── credit_project.py
 
 
-Or install manually:
+All generated files are stored inside the output directory after running the script.
 
-pip install pandas numpy scikit-learn shap joblib matplotlib seaborn
+How to Run the Project
+1. Install the Dependencies
+pip install lightgbm xgboost shap lime imbalanced-learn joblib matplotlib pandas numpy scikit-learn
 
-Dataset
+2. Prepare the Dataset
 
-The project uses credit_risk_dataset.csv, which should be placed in:
+Download cs-training.csv and place it in the same directory as credit_project.py.
 
-data/credit_risk_dataset.csv
-
-
-The dataset contains demographic attributes, financial variables, and historical delinquency indicators.
-
-Running the Project
-
-Launch Jupyter Notebook:
-
-jupyter notebook
+3. Run the Script
+python3 credit_project.py
 
 
-Open and execute:
+You can also specify custom input and output paths:
 
-notebooks/Credit_Risk_Project.ipynb
+python3 credit_project.py --datafile cs-training.csv --outdir credit_output
 
+Output Files
 
-Running the notebook generates the following:
+After the script finishes running, the output folder will contain the following resources:
 
-Processed dataset
+Model Evaluation
 
-Trained models
+metrics.txt
+Contains AUC, precision, recall, F1 score, and the confusion matrix.
 
-Evaluation metrics
+Saved Model Files
 
-SHAP-based explainability outputs
-
-Figures and visual summaries
-
-Output archive (credit_output.zip)
-
-Outputs
-Model Artifacts
-
-random_forest_model.pkl
-
-logistic_regression_model.pkl
+best_lgb.pkl
 
 preprocessor.pkl
 
-Evaluation Metrics
+Explainability Resources
 
-Metrics include accuracy, AUC, precision, recall, F1-score, and confusion matrix, saved in:
+shap_summary.png
 
-model_metrics.txt
+shap_feature_importance.csv
 
-Explainability Outputs
+LIME explanation files for selected individuals
 
-SHAP summary plot
+Fairness / Bias Analysis
 
-Feature importance ranking
+bias_check.txt
+Reports performance differences across multiple age groups.
 
-Local instance-level explanations
-
-SHAP values and base values
-
-All explainability files are stored in:
-
-shap_outputs/
-
-Visualization Assets
-
-Correlation heatmap
-
-SHAP summary plot
-
-Model feature importance
-
-Stored in:
-
-figures/
-
-Export Package
-
-A consolidated archive containing all results is generated as:
+Complete Archive
 
 credit_output.zip
 
-Workflow Summary
+This file contains all generated artifacts packaged together for ease of submission.
 
-Data loading and validation
+Overview of the Modeling Workflow
+Step	Description
+Data Cleaning	Removal of ID fields, handling columns with substantial missing data
+Preprocessing	Scaling and one-hot encoding
+Class Balancing	Oversampling performed using SMOTE
+Model Training	LightGBM tuned with RandomizedSearchCV; XGBoost used for comparison
+Explainability	SHAP (global + local) and LIME for individual cases
+Fairness Assessment	Evaluation of age-group bias
+Final Model Performance
 
-Preprocessing (scaling, encoding, missing value handling)
+(Extracted from metrics.txt)
 
-Model training (RandomForestClassifier, LogisticRegression)
-
-Performance evaluation
-
-Interpretation using SHAP
-
-Exporting trained models and artifacts
-
-Model Performance (Example)
 Metric	Score
-Accuracy	0.81
-AUC	0.87
-Precision	0.65
-Recall	0.58
-F1 Score	0.61
-
-The Random Forest model delivered the strongest overall performance and is selected as the final model.
-
+AUC	0.8468
+Precision	0.4750
+Recall	0.2469
+F1 Score	0.3249
+Confusion Matrix	[[27448, 547], [1510, 495]]
 Explainability Summary
+Global SHAP Observations
 
-SHAP analysis highlights the key factors influencing model decisions. The most influential predictors include:
+Based on the SHAP summaries, the main drivers influencing predicted default risk are:
 
-Debt Ratio
+Revolving credit utilization
 
-Revolving Credit Utilization
+Count of 90-day late payments
 
-Monthly Income
+Debt ratio
 
-Counts of prior delinquency
+Monthly income
 
-Number of open credit lines
+Frequency of 30–59 day delinquencies
 
-Both global and local interpretations are provided to support model transparency and regulatory compliance.
+Local Interpretations
+
+Five individual cases (covering high-risk, low-risk, and borderline predictions) were analyzed using SHAP force plots and LIME.
+These files are available in the output directory.
+
+Fairness Assessment
+
+A fairness check was carried out across four age brackets:
+
+30 and below
+
+31–45
+
+46–60
+
+Above 60
+
+The resulting bias_check.txt file highlights differences in predicted default rates and provides a brief interpretation.
 
 Notes
 
-This project is fully offline and self-contained.
+The project runs locally and does not require Google Colab.
 
-All required assets for evaluation, grading, and portfolio demonstration are included.
+The script follows a clean, modular structure for clarity and maintainability.
 
-The implementation follows standard machine learning development practices suitable for production-level modeling.
+All key deliverables (models, figures, metrics, SHAP/LIME outputs, and fairness results) are automatically saved.
+
+Suitable for academic coursework, explainable AI demonstrations, and practical credit risk modeling applications.
